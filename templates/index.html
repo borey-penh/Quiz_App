@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+    {% block content %}
+        <h1 class="welcome">Welcome to Quiz App</h1><br>
+        <h3 class="h3">Choose a category</h3>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for cat, msg in messages %}
+            <div class="flash-message">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <ul class="categories">
+            {% for c in categories %}
+                <li><a href="{{ url_for('quiz', category=c) }}">{{ c }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endblock %}
+
+
+
+</body>
+</html>
