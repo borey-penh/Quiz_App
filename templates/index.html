@@ -7,27 +7,15 @@
 </head>
 <body>
     {% extends 'base.html' %}
-
+    {% block title %}All Quizzes{% endblock %}
     {% block content %}
-        <h1 class="welcome">Welcome to Quiz App</h1><br>
-        <h3 class="h3">Choose a category</h3>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for cat, msg in messages %}
-            <div class="flash-message">{{ msg }}</div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
-
-        <ul class="categories">
-            {% for c in categories %}
-                <li><a href="{{ url_for('quiz', category=c) }}">{{ c }}</a></li>
-            {% endfor %}
-        </ul>
+    <h1>All Quizzes</h1>
+    <ul class="quiz">
+    {% for q in quizzes %}
+        <li><a href="{{ url_for('take_quiz', slug=q.slug) }}">{{ q.title }}</a> - {{ q.description }}</li>
+    {% endfor %}
+    </ul>
     {% endblock %}
-
-
 
 </body>
 </html>

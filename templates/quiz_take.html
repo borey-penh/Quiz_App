@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+    {% block title %}Take Quiz{% endblock %}
+
+    {% block content %}
+    <h2>{{ quiz.title }}</h2>
+    <p>{{ quiz.description }}</p>
+
+    <form method="POST">
+        {# Support a few shapes for `questions` so template is robust #}
+        {% for item in questions %}
+            {% if item is sequence and item|length >= 3 %}
+                {% set q_index = item[0] %}
+                {% set q = item[1] %}
+                {% set choices = item[2] %}
+            {% elif item is sequence and item|length == 2 %}
+                {% set q_index = loop.index0 %}
+                {% set q = item[0] %}
+                {% set choices = item[1] %}
+            {% else %}
+                {% set q_index = loop.index0 %}
+                {% set q = item %}
+                {% set choices = [] %}
+            {% endif %}
+
+            <div style="margin-bottom:20px;">
+                <p><strong>Q{{ q_index + 1 }}: {{ q.text }}</strong></p>
+
+                {% for c in choices %}
+                    {% if c is sequence and c|length >= 2 %}
+                        {% set c_index = c[0] %}
+                        {% set c_text = c[1] %}
+                    {% else %}
+                        {% set c_index = loop.index0 %}
+                        {% set c_text = c %}
+                    {% endif %}
+                    <label>
+                        <input type="radio" name="q-{{ q_index }}" value="{{ c_index }}" required>
+                        {{ c_text }}
+                    </label><br>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {% if not user %}
+            <p>
+                <label>Name: <input type="text" name="guest_name" required></label>
+            </p>
+            <p>
+                <label>Email: <input type="email" name="guest_email" required></label>
+            </p>
+        {% endif %}
+
+        <button type="submit">Submit Quiz</button>
+    </form>
+    {% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- ...existing code... -->
+{% extends 'base.html' %}
+
+{% block title %}Results{% endblock %}
+
+{% block content %}
+<h2>Results — {{ quiz.title }}</h2>
+<p>Score: {{ submission.score }} / {{ questions|length }}</p>
+
+<ol>
+{% for question in questions %}
+    {% set q_index = loop.index0 %}
+    {% set key = q_index|string %}
+    {% set selected = answers[key] if key in answers else none %}
+    <li>
+        <p><strong>Q{{ q_index + 1 }}: {{ question.text }}</strong></p>
+        <ul>
+        {% for choice in question.choices() %}
+            {% set c_index = loop.index0 %}
+            <li
+                {% if selected is not none and selected == c_index %}
+                    style="font-weight:bold; {% if c_index == question.correct %}color:green{% else %}color:red{% endif %}"
+                {% elif c_index == question.correct %}
+                    style="color:green"
+                {% endif %}
+            >
+                {{ choice }}
+                {% if c_index == question.correct %} <strong>(correct)</strong> {% endif %}
+                {% if selected is not none and selected == c_index and c_index != question.correct %}
+                    <em>(your answer)</em>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    </li>
+{% endfor %}
+    <button type="submit">Submit results</button>
+</ol>
+{% endblock %}
+<!-- ...existing code... -->
+
+</body>
+</html>

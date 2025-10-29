@@ -1,0 +1,219 @@
+/* ----- General ----- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f7f8;
+    color: #333;
+}
+
+.container {
+    width: 90%;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* ----- Navigation ----- */
+nav {
+    background: #3b82f6;
+    display: flex;
+    align-items: center;
+    margin:0  ;
+    height: 80px;
+    width: 100%;
+    justify-content: space-between;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.navbar{
+    font-size: 20px;
+    margin-right: 80px;
+    display: flex;
+    gap: 60px;
+    color: #fff;
+    
+}
+
+nav a {
+
+    margin-right: 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.navbar a {
+    text-decoration: none;
+    font-size: 24px;
+    position: relative;
+    color: #fff;
+}
+
+.navbar a:hover {
+    color: #032355;
+}
+.navbar a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background-color:  #032355;
+  transition: width 0.3s;
+}
+
+.navbar a:hover::after {
+  width: 100%;
+}
+
+img{
+    height: 70px;
+    margin-left: 40px;
+    border-radius: 100%;
+}
+
+/* ----- Headings ----- */
+h1, h2, h3 {
+    color: #1e293b;
+    margin-bottom: 15px;
+}
+
+/* ----- Flash messages ----- */
+.flash {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    color: #b91c1c;
+    font-weight: bold;
+}
+
+/* ----- Forms ----- */
+form p {
+    margin-bottom: 15px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #cbd5e1;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button:hover {
+    background-color: #2563eb;
+}
+
+/* ----- Quiz List ----- */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    padding: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+ul li a {
+    font-weight: bold;
+    color: #1d4ed8;
+}
+
+ul li a:hover {
+    text-decoration: underline;
+}
+
+/* ----- Quiz Questions ----- */
+form p {
+    margin-bottom: 12px;
+}
+
+form input[type="radio"] {
+    margin-right: 8px;
+}
+
+.question {
+    padding: 10px;
+    margin-bottom: 15px;
+    background: #f1f5f9;
+    border-radius: 5px;
+}
+
+/* ----- Results Page ----- */
+ol {
+    padding-left: 20px;
+}
+
+ol li {
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #f1f5f9;
+    border-radius: 5px;
+}
+
+.correct {
+    color: green;
+    font-weight: bold;
+}
+
+.incorrect {
+    color: red;
+    font-weight: bold;
+}
+.quiz{
+    list-style-type: none;
+    padding: 0;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.quiz li{
+    border: 1px solid #cccc;
+    border-radius: 10px;
+    padding: 20px;
+}
+.quiz li a{
+    text-decoration: none;
+}
+
+/* ----- Responsive ----- */
+@media (max-width: 600px) {
+    .container {
+        width: 95%;
+        padding: 15px;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav a {
+        margin: 5px 0;
+    }
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+    {% block title %}Edit Quiz{% endblock %}
+    {% block content %}
+    <h2>Edit Quiz: {{ quiz.title }}</h2>
+    <h3>Add Question</h3>
+    <form method="post">
+        <p>Question text:<br><textarea name="text" required></textarea></p>
+        <p>Choice 1: <input type="text" name="choice0" required></p>
+        <p>Choice 2: <input type="text" name="choice1" required></p>
+        <p>Choice 3: <input type="text" name="choice2"></p>
+        <p>Choice 4: <input type="text" name="choice3"></p>
+        <p>Correct choice index (0-3): <input type="number" name="correct" min="0" max="3" required></p>
+        <p><button type="submit">Add Question</button></p>
+    </form>
+
+    <h3>Current Questions</h3>
+    <ul>
+    {% for q in quiz.questions %}
+        <li>{{ q.text }} (Correct: {{ q.choices()[q.correct] }})</li>
+    {% endfor %}
+    </ul>
+    {% endblock %}
+
+</body>
+</html>

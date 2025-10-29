@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+    {% block title %}Quiz Details{% endblock %}
+    {% block content %}
+    <h2>{{ quiz.title }}</h2>
+    <p>{{ quiz.description }}</p>
+    <p>Questions: {{ quiz.questions|length }}</p>
+    {% endblock %}
+
+</body>
+</html>
