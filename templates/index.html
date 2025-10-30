@@ -12,7 +12,14 @@
     <h1>All Quizzes</h1>
     <ul class="quiz">
     {% for q in quizzes %}
-        <li><a href="{{ url_for('take_quiz', slug=q.slug) }}">{{ q.title }}</a> - {{ q.description }}</li>
+        <li>
+            <div class="quiz-item">
+                <a href="{{ url_for('take_quiz', slug=q.slug) }}">{{ q.title }}</a> - {{ q.description }}
+                <div class="quiz-actions">
+                    <a href="{{ url_for('manage_questions', quiz_id=q.id) }}" class="btn-manage">Manage Questions</a>
+                </div>
+            </div>
+        </li>
     {% endfor %}
     </ul>
     {% endblock %}

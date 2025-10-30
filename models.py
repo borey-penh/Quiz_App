@@ -28,12 +28,16 @@ class Quiz(db.Model):
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'))
-    text = db.Column(db.Text, nullable=False)
-    choices_json = db.Column(db.Text, nullable=False)
+    text = db.Column(db.String(500), nullable=False)
+    choices = db.Column(db.JSON, nullable=False)  # Store choices as JSON array
     correct = db.Column(db.Integer, nullable=False)
-    def choices(self):
-        return json.loads(self.choices_json)
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'), nullable=False)
+    
+    def get_choices(self):
+        return self.choices
+    
+    def set_choices(self, choices_list):
+        self.choices = choices_list
 
 class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True)

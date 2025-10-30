@@ -200,20 +200,186 @@ ol li {
 .quiz li a{
     text-decoration: none;
 }
+/* Quiz Management Styles */
+.quiz-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+.btn-manage {
+    display: inline-block;
+    padding: 5px 15px;
+    background-color: #1d7505;
+    color: white;
+    border-radius: 4px;
+    height: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
 
-/* ----- Responsive ----- */
+.manage-questions {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.choice-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.question-item {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.question-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-delete {
+    padding: 5px 15px;
+    background-color: #dc2626;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+/* ---------- Responsive: Tablet (<=1024px) ---------- */
+@media (max-width: 1024px) {
+  .container {
+    width: 94%;
+    max-width: 720px;
+    padding: 18px;
+    margin: 16px auto;
+  }
+
+  nav {
+    height: 86px;
+    padding: 0 12px;
+  }
+
+  .navbar {
+    gap: 28px;
+    margin-right: 24px;
+    font-size: 24px;
+  }
+
+  .navbar a {
+    font-size: 20px;
+  }
+
+  img {
+    height: 70px;
+    margin-left: 20px;
+  }
+
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.3rem; }
+  h3 { font-size: 1.1rem; }
+
+  /* make quiz items take full width but still clearly separated */
+  .quiz {
+    margin: 12px;
+    gap: 16px;
+  }
+  .quiz li {
+     padding: 18px; 
+     font-size: 24px;
+    }
+    form p{
+        font-size: 24px;
+    }
+    form input,button{
+        font-size: 24px;
+        border: 1px solid #cccc;
+    }
+}
+
+/* ---------- Responsive: Mobile phones (<=600px) ---------- */
 @media (max-width: 600px) {
-    .container {
-        width: 95%;
-        padding: 15px;
-    }
+  :root {
+    /* slightly larger tap targets on phones */
+    --btn-pad-y: 12px;
+    --btn-pad-x: 18px;
+  }
 
-    nav {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+  .container {
+    width: 96%;
+    max-width: 320px;
+    padding: 14px;
+    margin: 20px auto;
+    border-radius: 10px;
+  }
 
-    nav a {
-        margin: 5px 0;
-    }
+  nav {
+    height: 64px;
+    padding: 0 10px;
+    width: 95%;
+  }
+
+  .navbar {
+    gap: 14px;
+    margin-right: 8px;
+    font-size: 18px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .navbar a {
+    font-size: 18px;
+    padding: 6px 8px;
+  }
+
+  /* shrink logo */
+  img {
+    height: 48px;
+    margin-left: 8px;
+  }
+
+  /* Stack header content if needed */
+  nav > .brand,
+  nav > .navbar {
+    align-items: center;
+  }
+
+  /* Forms + inputs: easier to interact on phones */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  textarea {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+
+  button {
+    padding: var(--btn-pad-y) var(--btn-pad-x);
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Questions & quiz cards become compact */
+  .question { padding: 12px; }
+  .quiz li { padding: 14px; }
+
+  /* Reduce long horizontal spacing in lists */
+  ul li { padding: 8px 6px; }
+
+  /* ensure radiobuttons are easier to tap */
+  form input[type="radio"] {
+    transform: scale(1.15);
+    margin-right: 10px;
+  }
 }

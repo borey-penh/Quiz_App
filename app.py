@@ -6,14 +6,31 @@ from datetime import datetime
 from slugify import slugify
 from flask import Flask, render_template, redirect, url_for, flash
 from models import Quiz, Submission  # adjust to your actual models
-from flask_login import current_user 
+# from flask_login import current_user 
+from flask_wtf.csrf import CSRFProtect
+import os
+from datetime import timedelta
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired
 
-app = Flask(__name__)
+
+
+app = Flask(__name__,
+    static_url_path='/static',
+    static_folder='static')
 app.config['SECRET_KEY'] = 'your-secret-key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///quiz.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+app.config['WTF_CSRF_ENABLED'] = False
 
+db = SQLAlchemy(app)
+csrf = CSRFProtect(app)
+
+class LoginForm(FlaskForm):
+    email = StringField("Email", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    submit = SubmitField("Login")
 # ---------------- Models ----------------
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,6 +94,17 @@ def index():
     quizzes = Quiz.query.all()
     return render_template('index.html', quizzes=quizzes, user=current_user())
 
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory(app.static_folder, filename)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(days=7)
+
+@app.after_request
+def add_header(response):
+    if 'Cache-Control' not in response.headers:
+        response.headers['Cache-Control'] = 'public, max-age=86400'
+    return response
+
 @app.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
@@ -95,19 +123,26 @@ def register():
         return redirect(url_for('index'))
     return render_template('register.html')
 
-@app.route('/login', methods=['GET','POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        pw = request.form['password']
+    form = LoginForm()
+    # validate_on_submit() => request.method == 'POST' and CSRF + validators pass
+    if form.validate_on_submit():
+        email = form.email.data
+        pw = form.password.data
+
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(pw):
             session['user_id'] = user.id
-            flash("Logged in successfully")
-            return redirect(url_for('index'))
-        flash("Invalid email or password")
-    return render_template('login.html')
+            flash("Logged in successfully", "success")
+            return redirect(url_for('index'))  # or 'dashboard' as you prefer
 
+        # login failed
+        flash("Invalid email or password", "danger")
+        # fall through to re-render the form (no redirect)
+
+    # GET or failed POST: render login form (errors will be shown on template if you add them)
+    return render_template('login.html', form=form)
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
@@ -209,8 +244,99 @@ def take_quiz(slug):
     return render_template('quiz_take.html', quiz=quiz, questions=questions_indexed, user=current_user())
 # ...existing code...
 
+@app.route('/quiz/<int:quiz_id>/manage')
+@login_required
+def manage_questions(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    if quiz.creator_id != current_user().id:
+        flash("Not authorized")
+        return redirect(url_for('index'))
+    questions = Question.query.filter_by(quiz_id=quiz_id).all()
+    return render_template('manage_questions.html', quiz=quiz, questions=questions)
 
-# ...existing code...
+
+# Require login and verify creator
+@app.route('/quiz/<int:quiz_id>/questions/add', methods=['POST'])
+@login_required
+def add_question(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    if quiz.creator_id != current_user().id:
+        flash("Not authorized to add questions to this quiz.")
+        return redirect(url_for('manage_questions', quiz_id=quiz_id))
+
+    text = request.form.get('text','').strip()
+    # collect choices (allow variable number but minimum 2)
+    raw_choices = [request.form.get(f'choice{i}','').strip() for i in range(4)]
+    # keep non-empty
+    choices = [c for c in raw_choices if c]
+    if len(choices) < 2:
+        flash("Please provide at least two choices.")
+        return redirect(url_for('manage_questions', quiz_id=quiz_id))
+
+    try:
+        correct = int(request.form.get('correct', 0))
+    except ValueError:
+        correct = 0
+
+    if correct < 0 or correct >= len(choices):
+        flash("Invalid correct answer selection.")
+        return redirect(url_for('manage_questions', quiz_id=quiz_id))
+
+    question = Question(
+        quiz_id=quiz_id,
+        text=text,
+        choices_json=json.dumps(choices),
+        correct=correct
+    )
+    db.session.add(question)
+    db.session.commit()
+    flash("Question added.")
+    return redirect(url_for('manage_questions', quiz_id=quiz_id))
+
+@app.route('/questions/<int:question_id>/edit', methods=['POST'])
+@login_required
+def edit_question(question_id):
+    question = Question.query.get_or_404(question_id)
+    quiz = Quiz.query.get_or_404(question.quiz_id)
+    if quiz.creator_id != current_user().id:
+        flash("Not authorized to edit this question.")
+        return redirect(url_for('manage_questions', quiz_id=question.quiz_id))
+
+    text = request.form.get('text','').strip()
+    raw_choices = [request.form.get(f'choice{i}','').strip() for i in range(4)]
+    choices = [c for c in raw_choices if c]
+    if len(choices) < 2:
+        flash("Please provide at least two choices.")
+        return redirect(url_for('manage_questions', quiz_id=question.quiz_id))
+
+    try:
+        correct = int(request.form.get('correct', 0))
+    except ValueError:
+        correct = 0
+
+    if correct < 0 or correct >= len(choices):
+        flash("Invalid correct answer selection.")
+        return redirect(url_for('manage_questions', quiz_id=question.quiz_id))
+
+    question.text = text
+    question.choices_json = json.dumps(choices)
+    question.correct = correct
+    db.session.commit()
+    flash("Question updated.")
+    return redirect(url_for('manage_questions', quiz_id=question.quiz_id))
+
+@app.route('/questions/<int:question_id>/delete', methods=['POST'])
+@login_required
+def delete_question(question_id):
+    question = Question.query.get_or_404(question_id)
+    quiz_id = question.quiz_id
+    
+    db.session.delete(question)
+    db.session.commit()
+    
+    flash("Question deleted successfully.")
+    return redirect(url_for('manage_questions', quiz_id=quiz_id))
+
 @app.route('/results/<int:submission_id>')
 def results(submission_id):
     submission = Submission.query.get_or_404(submission_id)
