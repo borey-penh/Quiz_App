@@ -88,7 +88,7 @@ h1, h2, h3 {
     list-style: none;
     padding: 0;
     margin: 0 0 20px 0;
-    color: #b91c1c;
+    color: #40cb5b;
     font-weight: bold;
 }
 
@@ -323,21 +323,21 @@ ol li {
   }
 
   nav {
-    height: 64px;
-    padding: 0 10px;
+    height: 72px;
+    padding:0 10px;
     width: 95%;
   }
 
   .navbar {
-    gap: 14px;
+    gap: 10px;
     margin-right: 8px;
-    font-size: 18px;
+    font-size: 10px;
     flex-wrap: wrap;
     justify-content: flex-end;
   }
 
   .navbar a {
-    font-size: 18px;
+    font-size: 12px;
     padding: 6px 8px;
   }
 

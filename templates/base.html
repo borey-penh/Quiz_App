@@ -11,9 +11,9 @@
         <div class="navbar">
             <a href="{{ url_for('index') }}">Home</a>
             {% if user %}
-                <span>Welcome, {{ user.name }}</span>
                 <a href="{{ url_for('create_quiz') }}">Create Quiz</a>
                 <a href="{{ url_for('logout') }}">Logout</a>
+                <span>Welcome, {{ user.name }}</span>
             {% else %}
                 <a href="{{ url_for('register') }}">Register</a>
                 <a href="{{ url_for('login') }}">Login</a>
